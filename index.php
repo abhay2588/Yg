@@ -19,9 +19,9 @@ function fetchUrl($url) {
     return @file_get_contents($url, false, $context);
 }
 
-// URLs
-$astroUrl = "https://linearjitp-playback.astro.com.my/dash-wv/linear/$get";
-$proxyUrl = "https://proxy.mydementiacompanion.com.au/$get";
+// URLs — now defaulting to default_ott.mpd
+$astroUrl = "https://linearjitp-playback.astro.com.my/dash-wv/linear/$get/default_ott.mpd";
+$proxyUrl = "https://proxy.mydementiacompanion.com.au/$get/default_ott.mpd";
 
 $mpdContent = false;
 $errorMsg = [];
