@@ -4,7 +4,7 @@ header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: GET");
 
 //
-// ─── CHANNEL LIST (edit or expand freely) ───────────────────────────────
+// ─── CHANNEL LIST ───────────────────────────────────────────────
 //
 $channels = [
     ["id" => "505", "name" => "Astro Ria", "group" => "Entertainment"],
@@ -17,7 +17,7 @@ $channels = [
 ];
 
 //
-// ─── GENERATE M3U PLAYLIST ───────────────────────────────────────────────
+// ─── GENERATE M3U PLAYLIST ───────────────────────────────────────
 //
 function generate_m3u($channels, $baseUrl) {
     $out = "#EXTM3U\n";
@@ -29,32 +29,22 @@ function generate_m3u($channels, $baseUrl) {
 }
 
 //
-// ─── IF CHANNEL REQUESTED (?get=xxx) ─────────────────────────────────────
+// ─── IF CHANNEL REQUESTED (?get=xxx) ─────────────────────────────
 //
 if (isset($_GET['get'])) {
     $get = preg_replace('/[^a-zA-Z0-9_-]/', '', $_GET['get']); // sanitize
 
-    // Build URLs
-    $dashUrl = "https://linearjitp-playback.astro.com.my/dash-wv/linear/{$get}/manifest.mpd";
+    // Always use HLS (.m3u8)
     $hlsUrl  = "https://linearjitp-playback.astro.com.my/hls/live/{$get}/index.m3u8";
 
-    $ua = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
-
-    // Prefer HLS for IPTV & DASH for advanced apps
-    if (strpos($ua, 'tivimate') !== false || strpos($ua, 'smart') !== false || strpos($ua, 'vlc') !== false) {
-        $url = $hlsUrl;
-    } else {
-        $url = $dashUrl;
-    }
-
-    // Output the direct playable link (avoid redirect)
+    // Output direct playable HLS link
     header("Content-Type: text/plain");
-    echo $url;
+    echo $hlsUrl;
     exit;
 }
 
 //
-// ─── OTHERWISE, SHOW FULL M3U PLAYLIST ───────────────────────────────────
+// ─── OTHERWISE, OUTPUT FULL M3U PLAYLIST ─────────────────────────
 //
 header("Content-Type: application/vnd.apple.mpegurl");
 $baseUrl = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}{$_SERVER['SCRIPT_NAME']}";
